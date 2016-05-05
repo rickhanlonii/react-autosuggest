@@ -52,6 +52,7 @@ class Autosuggest extends Component {
     getSectionSuggestions: PropTypes.func.isRequired,
     focusInputOnSuggestionClick: PropTypes.bool.isRequired,
     tabToSelect: PropTypes.bool.isRequired,
+    selectFirstSuggestion: PropTypes.bool.isRequired,
     theme: PropTypes.object.isRequired,
     id: PropTypes.string.isRequired,
     inputRef: PropTypes.func.isRequired,
@@ -157,6 +158,18 @@ class Autosuggest extends Component {
     }
   }
 
+  maybeSelectFirstSuggestion(event, value) {
+    const { selectFirstSuggestion, multiSection, updateFocusedSuggestion } = this.props;
+
+    if (selectFirstSuggestion) {
+      let sectionIndex = multiSection ? 0 : null;
+      let suggestionIndex = 0;
+
+      updateFocusedSuggestion(sectionIndex, suggestionIndex, value);
+      this.maybeCallOnChange(event, value, 'auto');
+    }
+  }
+
   willRenderSuggestions() {
     const { suggestions, inputProps, shouldRenderSuggestions } = this.props;
     const { value } = inputProps;
@@ -190,6 +203,7 @@ class Autosuggest extends Component {
       onFocus: event => {
         if (!this.justClickedOnSuggestion) {
           inputFocused(shouldRenderSuggestions(value));
+          this.maybeSelectFirstSuggestion(event, value);
           onFocus && onFocus(event);
         }
       },
@@ -212,6 +226,7 @@ class Autosuggest extends Component {
         this.maybeCallOnChange(event, value, 'type');
         inputChanged(shouldRenderSuggestions(value), 'type');
         this.maybeCallOnSuggestionsUpdateRequested({ value, reason: 'type' });
+        this.maybeSelectFirstSuggestion(event, value);
       },
       onKeyDown: (event, data) => {
         switch (event.key) {

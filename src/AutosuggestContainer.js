@@ -70,6 +70,7 @@ export default class AutosuggestContainer extends Component {
     getSectionSuggestions: PropTypes.func,
     focusInputOnSuggestionClick: PropTypes.bool,
     tabToSelect: PropTypes.bool,
+    selectFirstSuggestion: PropTypes.bool,
     theme: PropTypes.object,
     id: PropTypes.string
   };
@@ -87,6 +88,7 @@ export default class AutosuggestContainer extends Component {
     },
     focusInputOnSuggestionClick: true,
     tabToSelect: false,
+    selectFirstSuggestion: false,
     theme: defaultTheme,
     id: '1'
   };
@@ -117,7 +119,7 @@ export default class AutosuggestContainer extends Component {
       multiSection, shouldRenderSuggestions, suggestions,
       onSuggestionsUpdateRequested, getSuggestionValue, renderSuggestion,
       renderSectionTitle, getSectionSuggestions, inputProps, onSuggestionSelected,
-      focusInputOnSuggestionClick, tabToSelect, theme, id
+      focusInputOnSuggestionClick, tabToSelect, selectFirstSuggestion, theme, id
     } = this.props;
 
     return (
@@ -133,6 +135,7 @@ export default class AutosuggestContainer extends Component {
                    onSuggestionSelected={onSuggestionSelected}
                    focusInputOnSuggestionClick={focusInputOnSuggestionClick}
                    tabToSelect={tabToSelect}
+                   selectFirstSuggestion={selectFirstSuggestion}
                    theme={mapToAutowhateverTheme(theme)}
                    id={id}
                    inputRef={this.saveInput}

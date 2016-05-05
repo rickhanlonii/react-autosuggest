@@ -34,7 +34,8 @@ import AutosuggestApp, {
   shouldRenderSuggestions,
   onSuggestionSelected,
   onSuggestionsUpdateRequested,
-  tabToSelect
+  tabToSelect,
+  selectFirstSuggestion
 } from './AutosuggestApp';
 
 describe('Plain list Autosuggest', () => {
@@ -133,6 +134,83 @@ describe('Plain list Autosuggest', () => {
     });
   });
 
+  describe('when typing and matches exist (when selectFirstSuggestion is true)', () => {
+    before(() => {
+      selectFirstSuggestion.true();
+    });
+
+    after(() => {
+      selectFirstSuggestion.false();
+    });
+
+    beforeEach(() => {
+      focusAndSetInputValue('p');
+    });
+
+    it('should focus on any suggestion', () => {
+      expectFocusedSuggestion('Perl');
+    });
+
+    it('should hide suggestions when Escape is pressed', () => {
+      clickEscape();
+      expectSuggestions([]);
+    });
+
+    it('should hide suggestions when input is blurred', () => {
+      blurInput();
+      expectSuggestions([]);
+    });
+
+    it('should show suggestions', () => {
+      expectSuggestions(['Perl', 'PHP', 'Python']);
+    });
+
+    it('should not clear the input when Escape is pressed', () => {
+      clickEscape();
+      expectInputValue('p');
+    });
+
+    it('should clear the input when Escape is pressed again', () => {
+      clickEscape();
+      clickEscape();
+      expectInputValue('');
+    });
+
+    it('should show suggestions when input is focused again', () => {
+      blurInput();
+      focusInput();
+      expectSuggestions(['Perl', 'PHP', 'Python']);
+    });
+
+    it('should focus suggestion when input is focused again', () => {
+      blurInput();
+      focusInput();
+      expectFocusedSuggestion('Perl');
+    });
+
+    it('should revert input value when Escape is pressed after Up/Down interaction', () => {
+      clickDown();
+      clickEscape();
+      expectInputValue('p');
+    });
+
+    it('should update input value when suggestion is clicked', () => {
+      clickSuggestion(1);
+      expectInputValue('PHP');
+    });
+
+    it('should focus on suggestion when mouse enters it', () => {
+      mouseEnterSuggestion(2);
+      expectFocusedSuggestion('Python');
+    });
+
+    it('should not have focused suggestions when mouse leaves a suggestion', () => {
+      mouseEnterSuggestion(2);
+      mouseLeaveSuggestion(2);
+      expectFocusedSuggestion(null);
+    });
+  });
+
   describe('when typing and matches do not exist', () => {
     beforeEach(() => {
       focusAndSetInputValue('z');
@@ -142,13 +220,45 @@ describe('Plain list Autosuggest', () => {
       expectSuggestions([]);
     });
 
+    it('should not focus suggestions', () => {
+      expectFocusedSuggestion(null);
+    });
+
     it('should clear the input when Escape is pressed', () => {
       clickEscape();
       expectInputValue('');
     });
   });
 
+  describe('when typing and matches do not exist (when selectFirstSuggestion is true', () => {
+    before(() => {
+      selectFirstSuggestion.true();
+    });
+
+    after(() => {
+      selectFirstSuggestion.false();
+    });
+
+    beforeEach(() => {
+      focusAndSetInputValue('z');
+    });
+
+    it('should not show suggestions', () => {
+      expectSuggestions([]);
+    });
+
+    it('should not focus suggestions', () => {
+      expectFocusedSuggestion(null);
+    });
+
+    it('should clear the input when Escape is pressed', () => {
+      clickEscape();
+      expectInputValue('z');
+    });
+  });
+
   describe('when pressing Down', () => {
+
     beforeEach(() => {
       focusAndSetInputValue('p');
     });
@@ -177,6 +287,47 @@ describe('Plain list Autosuggest', () => {
 
     it('should focus on the first suggestion again', () => {
       clickDown(5);
+      expectFocusedSuggestion('Perl');
+    });
+  });
+
+  describe('when pressing Down (when selectFirstSuggestion is true)', () => {
+    before(() => {
+      selectFirstSuggestion.true();
+    });
+
+    after(() => {
+      selectFirstSuggestion.false();
+    });
+
+    beforeEach(() => {
+      focusAndSetInputValue('p');
+    });
+
+    it('should show suggestions with no focused suggestion, if they are hidden', () => {
+      clickEscape();
+      clickDown();
+      expectSuggestions(['Perl', 'PHP', 'Python']);
+      expectFocusedSuggestion(null);
+    });
+
+    it('should focus on the second suggestion (first was selected on input)', () => {
+      clickDown();
+      expectFocusedSuggestion('PHP');
+    });
+
+    it('should focus on the next suggestion', () => {
+      clickDown(2);
+      expectFocusedSuggestion('Python');
+    });
+
+    it('should not focus on any suggestion after reaching the last suggestion', () => {
+      clickDown(3);
+      expectFocusedSuggestion(null);
+    });
+
+    it('should focus on the first suggestion again', () => {
+      clickDown(4);
       expectFocusedSuggestion('Perl');
     });
   });
@@ -214,6 +365,47 @@ describe('Plain list Autosuggest', () => {
     });
   });
 
+  describe('when pressing Up (when selectFirstSuggestion is true)', () => {
+    before(() => {
+      selectFirstSuggestion.true();
+    });
+
+    after(() => {
+      selectFirstSuggestion.false();
+    });
+
+    beforeEach(() => {
+      focusAndSetInputValue('p');
+    });
+
+    it('should show suggestions with no focused suggestion, if they are hidden', () => {
+      clickEscape();
+      clickUp();
+      expectSuggestions(['Perl', 'PHP', 'Python']);
+      expectFocusedSuggestion(null);
+    });
+
+    it('should focus on the input field', () => {
+      clickUp();
+      expectFocusedSuggestion(null);
+    });
+
+    it('should focus on the last suggestion', () => {
+      clickUp(2);
+      expectFocusedSuggestion('Python');
+    });
+
+    it('should focus on the second to last suggestion', () => {
+      clickUp(3);
+      expectFocusedSuggestion('PHP');
+    });
+
+    it('should focus on the first suggestion again', () => {
+      clickUp(4);
+      expectFocusedSuggestion('Perl');
+    });
+  });
+
   describe('when pressing Enter', () => {
     beforeEach(() => {
       focusAndSetInputValue('p');
@@ -228,6 +420,25 @@ describe('Plain list Autosuggest', () => {
     it('should not hide suggestions if there is no focused suggestion', () => {
       clickEnter();
       expectSuggestions(['Perl', 'PHP', 'Python']);
+    });
+  });
+
+  describe('when pressing Enter and selectFirstSuggestion is true', () => {
+    before(() => {
+      selectFirstSuggestion.true();
+    });
+
+    after(() => {
+      selectFirstSuggestion.false();
+    });
+
+    beforeEach(() => {
+      focusAndSetInputValue('p');
+    });
+
+    it('should hide suggestions since the first suggestion is focused', () => {
+      clickEnter();
+      expectSuggestions([]);
     });
   });
 
@@ -287,6 +498,29 @@ describe('Plain list Autosuggest', () => {
     });
   });
 
+  describe('when pressing Escape and selectFirstSuggestion is true', () => {
+    before(() => {
+      selectFirstSuggestion.true();
+    });
+
+    after(() => {
+      selectFirstSuggestion.false();
+    });
+
+    it('should reset the input if suggestions are hidden and never been shown before', () => {
+      focusAndSetInputValue('z');
+      clickEscape();
+      expectInputValue('z');
+    });
+
+    it('should reset the input if suggestions are hidden but were shown before', () => {
+      focusAndSetInputValue('p');
+      focusAndSetInputValue('pz');
+      clickEscape();
+      expectInputValue('pz');
+    });
+  });
+
   describe('when suggestion is clicked', () => {
     beforeEach(() => {
       focusAndSetInputValue('p');
@@ -324,6 +558,38 @@ describe('Plain list Autosuggest', () => {
       clickSuggestion(0);
       expect(getSuggestionValue).to.have.been.calledOnce;
       expect(getSuggestionValue).to.have.been.calledWithExactly({ name: 'Ruby', year: 1995 });
+    });
+  });
+
+  describe('getSuggestionValue when selectFirstSuggestion is true', () => {
+    before(() => {
+      selectFirstSuggestion.true();
+    });
+
+    after(() => {
+      selectFirstSuggestion.false();
+    });
+
+    beforeEach(() => {
+      getSuggestionValue.reset();
+      focusAndSetInputValue('p');
+    });
+
+    it('should not be called once when Up is pressed (input is focused)', () => {
+      clickUp();
+      expect(getSuggestionValue).not.to.have.been.called;
+    });
+
+    it('should be called once with the right parameters when Down is pressed', () => {
+      clickDown();
+      expect(getSuggestionValue).to.have.been.calledOnce;
+      expect(getSuggestionValue).to.have.been.calledWithExactly({ name: 'PHP', year: 1995 });
+    });
+
+    it('should be called once with the right parameters when suggestion is clicked', () => {
+      clickSuggestion(0);
+      expect(getSuggestionValue).to.have.been.calledOnce;
+      expect(getSuggestionValue).to.have.been.calledWithExactly({ name: 'Perl', year: 1987 });
     });
   });
 
@@ -446,6 +712,29 @@ describe('Plain list Autosuggest', () => {
       onChange.reset();
       clickSuggestion(0);
       expect(onChange).not.to.have.been.called;
+    });
+  });
+
+  describe('inputProps.onChange with selectFirstSuggestion', () => {
+    before(() => {
+      selectFirstSuggestion.true();
+    });
+
+    after(() => {
+      selectFirstSuggestion.false();
+    });
+
+    beforeEach(() => {
+      onChange.reset();
+    });
+
+    it('should be called once with the right parameters when user types', () => {
+      focusAndSetInputValue('c');
+      expect(onChange).to.have.been.calledTwice;
+      expect(onChange).to.be.calledWith(eventInstance, {
+        newValue: 'c',
+        method: 'auto'
+      });
     });
   });
 

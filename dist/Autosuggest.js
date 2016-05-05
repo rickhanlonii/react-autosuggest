@@ -181,12 +181,29 @@ var Autosuggest = function (_Component) {
       }
     }
   }, {
+    key: 'maybeSelectFirstSuggestion',
+    value: function maybeSelectFirstSuggestion(event, value) {
+      var _props4 = this.props;
+      var selectFirstSuggestion = _props4.selectFirstSuggestion;
+      var multiSection = _props4.multiSection;
+      var updateFocusedSuggestion = _props4.updateFocusedSuggestion;
+
+
+      if (selectFirstSuggestion) {
+        var sectionIndex = multiSection ? 0 : null;
+        var suggestionIndex = 0;
+
+        updateFocusedSuggestion(sectionIndex, suggestionIndex, value);
+        this.maybeCallOnChange(event, value, 'auto');
+      }
+    }
+  }, {
     key: 'willRenderSuggestions',
     value: function willRenderSuggestions() {
-      var _props4 = this.props;
-      var suggestions = _props4.suggestions;
-      var inputProps = _props4.inputProps;
-      var shouldRenderSuggestions = _props4.shouldRenderSuggestions;
+      var _props5 = this.props;
+      var suggestions = _props5.suggestions;
+      var inputProps = _props5.inputProps;
+      var shouldRenderSuggestions = _props5.shouldRenderSuggestions;
       var value = inputProps.value;
 
 
@@ -207,30 +224,30 @@ var Autosuggest = function (_Component) {
     value: function render() {
       var _this2 = this;
 
-      var _props5 = this.props;
-      var suggestions = _props5.suggestions;
-      var renderSuggestion = _props5.renderSuggestion;
-      var inputProps = _props5.inputProps;
-      var shouldRenderSuggestions = _props5.shouldRenderSuggestions;
-      var onSuggestionSelected = _props5.onSuggestionSelected;
-      var multiSection = _props5.multiSection;
-      var renderSectionTitle = _props5.renderSectionTitle;
-      var id = _props5.id;
-      var getSectionSuggestions = _props5.getSectionSuggestions;
-      var focusInputOnSuggestionClick = _props5.focusInputOnSuggestionClick;
-      var tabToSelect = _props5.tabToSelect;
-      var theme = _props5.theme;
-      var isFocused = _props5.isFocused;
-      var isCollapsed = _props5.isCollapsed;
-      var focusedSectionIndex = _props5.focusedSectionIndex;
-      var focusedSuggestionIndex = _props5.focusedSuggestionIndex;
-      var valueBeforeUpDown = _props5.valueBeforeUpDown;
-      var inputFocused = _props5.inputFocused;
-      var inputBlurred = _props5.inputBlurred;
-      var inputChanged = _props5.inputChanged;
-      var updateFocusedSuggestion = _props5.updateFocusedSuggestion;
-      var revealSuggestions = _props5.revealSuggestions;
-      var closeSuggestions = _props5.closeSuggestions;
+      var _props6 = this.props;
+      var suggestions = _props6.suggestions;
+      var renderSuggestion = _props6.renderSuggestion;
+      var inputProps = _props6.inputProps;
+      var shouldRenderSuggestions = _props6.shouldRenderSuggestions;
+      var onSuggestionSelected = _props6.onSuggestionSelected;
+      var multiSection = _props6.multiSection;
+      var renderSectionTitle = _props6.renderSectionTitle;
+      var id = _props6.id;
+      var getSectionSuggestions = _props6.getSectionSuggestions;
+      var focusInputOnSuggestionClick = _props6.focusInputOnSuggestionClick;
+      var tabToSelect = _props6.tabToSelect;
+      var theme = _props6.theme;
+      var isFocused = _props6.isFocused;
+      var isCollapsed = _props6.isCollapsed;
+      var focusedSectionIndex = _props6.focusedSectionIndex;
+      var focusedSuggestionIndex = _props6.focusedSuggestionIndex;
+      var valueBeforeUpDown = _props6.valueBeforeUpDown;
+      var inputFocused = _props6.inputFocused;
+      var inputBlurred = _props6.inputBlurred;
+      var inputChanged = _props6.inputChanged;
+      var updateFocusedSuggestion = _props6.updateFocusedSuggestion;
+      var revealSuggestions = _props6.revealSuggestions;
+      var closeSuggestions = _props6.closeSuggestions;
       var value = inputProps.value;
       var _onBlur = inputProps.onBlur;
       var _onFocus = inputProps.onFocus;
@@ -242,6 +259,7 @@ var Autosuggest = function (_Component) {
         onFocus: function onFocus(event) {
           if (!_this2.justClickedOnSuggestion) {
             inputFocused(shouldRenderSuggestions(value));
+            _this2.maybeSelectFirstSuggestion(event, value);
             _onFocus && _onFocus(event);
           }
         },
@@ -265,6 +283,7 @@ var Autosuggest = function (_Component) {
           _this2.maybeCallOnChange(event, value, 'type');
           inputChanged(shouldRenderSuggestions(value), 'type');
           _this2.maybeCallOnSuggestionsUpdateRequested({ value: value, reason: 'type' });
+          _this2.maybeSelectFirstSuggestion(event, value);
         },
         onKeyDown: function onKeyDown(event, data) {
           switch (event.key) {
@@ -440,6 +459,7 @@ Autosuggest.propTypes = {
   getSectionSuggestions: _react.PropTypes.func.isRequired,
   focusInputOnSuggestionClick: _react.PropTypes.bool.isRequired,
   tabToSelect: _react.PropTypes.bool.isRequired,
+  selectFirstSuggestion: _react.PropTypes.bool.isRequired,
   theme: _react.PropTypes.object.isRequired,
   id: _react.PropTypes.string.isRequired,
   inputRef: _react.PropTypes.func.isRequired,

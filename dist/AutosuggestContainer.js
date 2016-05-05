@@ -115,6 +115,7 @@ var AutosuggestContainer = function (_Component) {
       var onSuggestionSelected = _props.onSuggestionSelected;
       var focusInputOnSuggestionClick = _props.focusInputOnSuggestionClick;
       var tabToSelect = _props.tabToSelect;
+      var selectFirstSuggestion = _props.selectFirstSuggestion;
       var theme = _props.theme;
       var id = _props.id;
 
@@ -131,6 +132,7 @@ var AutosuggestContainer = function (_Component) {
         onSuggestionSelected: onSuggestionSelected,
         focusInputOnSuggestionClick: focusInputOnSuggestionClick,
         tabToSelect: tabToSelect,
+        selectFirstSuggestion: selectFirstSuggestion,
         theme: mapToAutowhateverTheme(theme),
         id: id,
         inputRef: this.saveInput,
@@ -164,6 +166,7 @@ AutosuggestContainer.propTypes = {
   getSectionSuggestions: _react.PropTypes.func,
   focusInputOnSuggestionClick: _react.PropTypes.bool,
   tabToSelect: _react.PropTypes.bool,
+  selectFirstSuggestion: _react.PropTypes.bool,
   theme: _react.PropTypes.object,
   id: _react.PropTypes.string
 };
@@ -183,6 +186,7 @@ AutosuggestContainer.defaultProps = {
 
   focusInputOnSuggestionClick: true,
   tabToSelect: false,
+  selectFirstSuggestion: false,
   theme: defaultTheme,
   id: '1'
 };

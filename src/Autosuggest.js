@@ -260,7 +260,7 @@ class Autosuggest extends Component {
               event.preventDefault();
               const focusedSuggestion = this.getFocusedSuggestion();
 
-              if (focusedSuggestion !== null) {
+              if (focusedSuggestion) {
                 const newValue = getSuggestionValue(focusedSuggestion);
 
                 closeSuggestions('tab');
@@ -282,7 +282,7 @@ class Autosuggest extends Component {
           case 'Enter': {
             const focusedSuggestion = this.getFocusedSuggestion();
 
-            if (focusedSuggestion !== null) {
+            if (focusedSuggestion) {
               const newValue = getSuggestionValue(focusedSuggestion);
 
               closeSuggestions('enter');

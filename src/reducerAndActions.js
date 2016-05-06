@@ -2,6 +2,7 @@ const INPUT_FOCUSED = 'INPUT_FOCUSED';
 const INPUT_BLURRED = 'INPUT_BLURRED';
 const INPUT_CHANGED = 'INPUT_CHANGED';
 const UPDATE_FOCUSED_SUGGESTION = 'UPDATE_FOCUSED_SUGGESTION';
+const AUTO_SELECT_SUGGESTION = 'AUTO_SELECT_SUGGESTION';
 const REVEAL_SUGGESTIONS = 'REVEAL_SUGGESTIONS';
 const CLOSE_SUGGESTIONS = 'CLOSE_SUGGESTIONS';
 
@@ -29,6 +30,15 @@ export function inputChanged(shouldRenderSuggestions, lastAction) {
 export function updateFocusedSuggestion(sectionIndex, suggestionIndex, value) {
   return {
     type: UPDATE_FOCUSED_SUGGESTION,
+    sectionIndex,
+    suggestionIndex,
+    value
+  };
+}
+
+export function autoSelectSuggestion(sectionIndex, suggestionIndex, value) {
+  return {
+    type: AUTO_SELECT_SUGGESTION,
     sectionIndex,
     suggestionIndex,
     value
@@ -88,6 +98,23 @@ export default function reducer(state, action) {
         ...state,
         focusedSectionIndex: sectionIndex,
         focusedSuggestionIndex: suggestionIndex,
+        valueBeforeUpDown,
+        autoSelectedSuggestion: false
+      };
+    }
+
+    case AUTO_SELECT_SUGGESTION: {
+      const { sectionIndex, suggestionIndex, value } = action;
+      const valueBeforeUpDown =
+        state.valueBeforeUpDown === null && typeof value !== 'undefined'
+          ? value
+          : state.valueBeforeUpDown;
+
+      return {
+        ...state,
+        focusedSectionIndex: sectionIndex,
+        focusedSuggestionIndex: suggestionIndex,
+        autoSelectedSuggestion: true,
         valueBeforeUpDown
       };
     }

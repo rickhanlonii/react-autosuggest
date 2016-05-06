@@ -34,6 +34,7 @@ function mapStateToProps(state) {
     isCollapsed: state.isCollapsed,
     focusedSectionIndex: state.focusedSectionIndex,
     focusedSuggestionIndex: state.focusedSuggestionIndex,
+    autoSelectedSuggestion: state.autoSelectedSuggestion,
     valueBeforeUpDown: state.valueBeforeUpDown,
     lastAction: state.lastAction
   };
@@ -52,6 +53,9 @@ function mapDispatchToProps(dispatch) {
     },
     updateFocusedSuggestion: function updateFocusedSuggestion(sectionIndex, suggestionIndex, value) {
       dispatch((0, _reducerAndActions.updateFocusedSuggestion)(sectionIndex, suggestionIndex, value));
+    },
+    autoSelectSuggestion: function autoSelectSuggestion(sectionIndex, suggestionIndex) {
+      dispatch((0, _reducerAndActions.autoSelectSuggestion)(sectionIndex, suggestionIndex));
     },
     revealSuggestions: function revealSuggestions() {
       dispatch((0, _reducerAndActions.revealSuggestions)());
@@ -186,14 +190,14 @@ var Autosuggest = function (_Component) {
       var _props4 = this.props;
       var selectFirstSuggestion = _props4.selectFirstSuggestion;
       var multiSection = _props4.multiSection;
-      var updateFocusedSuggestion = _props4.updateFocusedSuggestion;
+      var autoSelectSuggestion = _props4.autoSelectSuggestion;
 
 
       if (selectFirstSuggestion) {
         var sectionIndex = multiSection ? 0 : null;
         var suggestionIndex = 0;
 
-        updateFocusedSuggestion(sectionIndex, suggestionIndex, value);
+        autoSelectSuggestion(sectionIndex, suggestionIndex, value);
         this.maybeCallOnChange(event, value, 'auto');
       }
     }
@@ -248,6 +252,8 @@ var Autosuggest = function (_Component) {
       var updateFocusedSuggestion = _props6.updateFocusedSuggestion;
       var revealSuggestions = _props6.revealSuggestions;
       var closeSuggestions = _props6.closeSuggestions;
+      var autoSelectedSuggestion = _props6.autoSelectedSuggestion;
+      var getSuggestionValue = _props6.getSuggestionValue;
       var value = inputProps.value;
       var _onBlur = inputProps.onBlur;
       var _onFocus = inputProps.onFocus;
@@ -297,7 +303,8 @@ var Autosuggest = function (_Component) {
                 var newFocusedSectionIndex = data.newFocusedSectionIndex;
                 var newFocusedItemIndex = data.newFocusedItemIndex;
 
-                var newValue = newFocusedItemIndex === null ? valueBeforeUpDown : _this2.getSuggestionValueByIndex(newFocusedSectionIndex, newFocusedItemIndex);
+                var safeValue = valueBeforeUpDown ? valueBeforeUpDown : value;
+                var newValue = newFocusedItemIndex === null ? safeValue : _this2.getSuggestionValueByIndex(newFocusedSectionIndex, newFocusedItemIndex);
 
                 updateFocusedSuggestion(newFocusedSectionIndex, newFocusedItemIndex, value);
                 _this2.maybeCallOnChange(event, newValue, event.key === 'ArrowDown' ? 'down' : 'up');
@@ -311,14 +318,20 @@ var Autosuggest = function (_Component) {
                   var focusedSuggestion = _this2.getFocusedSuggestion();
 
                   if (focusedSuggestion !== null) {
+                    var _newValue = getSuggestionValue(focusedSuggestion);
+
                     closeSuggestions('tab');
                     onSuggestionSelected(event, {
                       suggestion: focusedSuggestion,
-                      suggestionValue: value,
+                      suggestionValue: _newValue,
                       sectionIndex: focusedSectionIndex,
                       method: 'tab'
                     });
-                    _this2.maybeCallOnSuggestionsUpdateRequested({ value: value, reason: 'tab' });
+
+                    if (autoSelectedSuggestion) {
+                      _this2.maybeCallOnChange(event, _newValue, event.key === 'enter');
+                    }
+                    _this2.maybeCallOnSuggestionsUpdateRequested({ value: _newValue, reason: 'tab' });
                   }
                 }
                 break;
@@ -328,14 +341,18 @@ var Autosuggest = function (_Component) {
                 var _focusedSuggestion = _this2.getFocusedSuggestion();
 
                 if (_focusedSuggestion !== null) {
+                  var _newValue2 = getSuggestionValue(_focusedSuggestion);
+
                   closeSuggestions('enter');
                   onSuggestionSelected(event, {
                     suggestion: _focusedSuggestion,
-                    suggestionValue: value,
+                    suggestionValue: _newValue2,
                     sectionIndex: focusedSectionIndex,
                     method: 'enter'
                   });
-                  _this2.maybeCallOnSuggestionsUpdateRequested({ value: value, reason: 'enter' });
+
+                  _this2.maybeCallOnChange(event, _newValue2, event.key === 'enter');
+                  _this2.maybeCallOnSuggestionsUpdateRequested({ value: _newValue2, reason: 'enter' });
                 }
                 break;
               }
@@ -468,6 +485,7 @@ Autosuggest.propTypes = {
   isCollapsed: _react.PropTypes.bool.isRequired,
   focusedSectionIndex: _react.PropTypes.number,
   focusedSuggestionIndex: _react.PropTypes.number,
+  autoSelectedSuggestion: _react.PropTypes.bool,
   valueBeforeUpDown: _react.PropTypes.string,
   lastAction: _react.PropTypes.string,
 
@@ -476,6 +494,7 @@ Autosuggest.propTypes = {
   inputChanged: _react.PropTypes.func.isRequired,
   updateFocusedSuggestion: _react.PropTypes.func.isRequired,
   revealSuggestions: _react.PropTypes.func.isRequired,
-  closeSuggestions: _react.PropTypes.func.isRequired
+  closeSuggestions: _react.PropTypes.func.isRequired,
+  autoSelectSuggestion: _react.PropTypes.func.isRequired
 };
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Autosuggest);

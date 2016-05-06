@@ -10,6 +10,7 @@ exports.inputFocused = inputFocused;
 exports.inputBlurred = inputBlurred;
 exports.inputChanged = inputChanged;
 exports.updateFocusedSuggestion = updateFocusedSuggestion;
+exports.autoSelectSuggestion = autoSelectSuggestion;
 exports.revealSuggestions = revealSuggestions;
 exports.closeSuggestions = closeSuggestions;
 exports.default = reducer;
@@ -17,6 +18,7 @@ var INPUT_FOCUSED = 'INPUT_FOCUSED';
 var INPUT_BLURRED = 'INPUT_BLURRED';
 var INPUT_CHANGED = 'INPUT_CHANGED';
 var UPDATE_FOCUSED_SUGGESTION = 'UPDATE_FOCUSED_SUGGESTION';
+var AUTO_SELECT_SUGGESTION = 'AUTO_SELECT_SUGGESTION';
 var REVEAL_SUGGESTIONS = 'REVEAL_SUGGESTIONS';
 var CLOSE_SUGGESTIONS = 'CLOSE_SUGGESTIONS';
 
@@ -44,6 +46,15 @@ function inputChanged(shouldRenderSuggestions, lastAction) {
 function updateFocusedSuggestion(sectionIndex, suggestionIndex, value) {
   return {
     type: UPDATE_FOCUSED_SUGGESTION,
+    sectionIndex: sectionIndex,
+    suggestionIndex: suggestionIndex,
+    value: value
+  };
+}
+
+function autoSelectSuggestion(sectionIndex, suggestionIndex, value) {
+  return {
+    type: AUTO_SELECT_SUGGESTION,
     sectionIndex: sectionIndex,
     suggestionIndex: suggestionIndex,
     value: value
@@ -100,7 +111,24 @@ function reducer(state, action) {
         return _extends({}, state, {
           focusedSectionIndex: sectionIndex,
           focusedSuggestionIndex: suggestionIndex,
-          valueBeforeUpDown: valueBeforeUpDown
+          valueBeforeUpDown: valueBeforeUpDown,
+          autoSelectedSuggestion: false
+        });
+      }
+
+    case AUTO_SELECT_SUGGESTION:
+      {
+        var _sectionIndex = action.sectionIndex;
+        var _suggestionIndex = action.suggestionIndex;
+        var _value = action.value;
+
+        var _valueBeforeUpDown = state.valueBeforeUpDown === null && typeof _value !== 'undefined' ? _value : state.valueBeforeUpDown;
+
+        return _extends({}, state, {
+          focusedSectionIndex: _sectionIndex,
+          focusedSuggestionIndex: _suggestionIndex,
+          autoSelectedSuggestion: true,
+          valueBeforeUpDown: _valueBeforeUpDown
         });
       }
 

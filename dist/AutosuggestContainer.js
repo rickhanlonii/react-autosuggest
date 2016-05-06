@@ -173,7 +173,7 @@ AutosuggestContainer.propTypes = {
 AutosuggestContainer.defaultProps = {
   onSuggestionsUpdateRequested: noop,
   shouldRenderSuggestions: function shouldRenderSuggestions(value) {
-    return value.trim().length > 0;
+    return value && value.trim().length > 0;
   },
   onSuggestionSelected: noop,
   multiSection: false,

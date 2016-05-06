@@ -317,7 +317,7 @@ var Autosuggest = function (_Component) {
                   event.preventDefault();
                   var focusedSuggestion = _this2.getFocusedSuggestion();
 
-                  if (focusedSuggestion !== null) {
+                  if (focusedSuggestion) {
                     var _newValue = getSuggestionValue(focusedSuggestion);
 
                     closeSuggestions('tab');
@@ -340,7 +340,7 @@ var Autosuggest = function (_Component) {
               {
                 var _focusedSuggestion = _this2.getFocusedSuggestion();
 
-                if (_focusedSuggestion !== null) {
+                if (_focusedSuggestion) {
                   var _newValue2 = getSuggestionValue(_focusedSuggestion);
 
                   closeSuggestions('enter');
